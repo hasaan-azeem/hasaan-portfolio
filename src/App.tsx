@@ -4,9 +4,12 @@ import Home5Page from "@/pages/Home5Page";
 import ContactPage from "@/pages/ContactPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import ProjectDetailPage from "@/pages/ProjectDetailPage";
+import ScrollToTop from "@/shared/elements/ScrollToTop";
 
 export default function App() {
   return (
+    <>
+      <ScrollToTop />
     <Routes>
       <Route element={<MainLayout headerStyle={5} footerStyle={5} />}>
         <Route path="/" element={<Home5Page />} />
@@ -25,5 +28,6 @@ export default function App() {
       <Route path="/index-5" element={<Navigate to="/" replace />} />
       <Route path="/index-5-dark" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   );
 }

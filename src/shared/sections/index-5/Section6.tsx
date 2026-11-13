@@ -1,5 +1,7 @@
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
 import RevealText from "@/shared/effects/RevealText";
 
 // Home 5 Section 6 - Projects & Technical Skills (My Journey)
@@ -64,13 +66,6 @@ const JOURNEY_ITEMS = [
     company: "Business Incubation Center",
     desc: "Built and deployed MERN-stack web applications and Flutter mobile applications for external clients. Worked with React.js, Node.js, Express REST APIs, MongoDB, and Flutter.",
   },
-//   {
-//     date: "Aug 2025 – Present",
-//     type: "ENTREPRENEURSHIP",
-//     title: "Founder / Builder",
-//     company: "Technologant",
-//     desc: "Building digital solutions for businesses, including websites, AI integrations, and workflow automation.",
-//   },
   {
     date: "2022 – 2026",
     type: "EDUCATION",
@@ -79,8 +74,6 @@ const JOURNEY_ITEMS = [
     desc: "Completed undergraduate studies in Information Technology, applying technical knowledge through academic work and software development projects.",
   },
 ];
-
-import { createPortal } from "react-dom";
 
 function CVEmailModal({
   isOpen,
@@ -92,22 +85,56 @@ function CVEmailModal({
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
 
-  const validateEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+  const validateEmail = (val: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateEmail(email)) {
+
+    const normalizedEmail = email.trim();
+
+    if (!validateEmail(normalizedEmail)) {
       setError("Enter a valid email address, please.");
       return;
     }
+
     setError("");
-    setSubmitted(true);
-    setTimeout(() => {
-      onClose();
-      setSubmitted(false);
-      setEmail("");
-    }, 2200);
+    setSending(true);
+
+    try {
+      const response = await fetch("/api/send-cv", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: normalizedEmail }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send your resume.");
+      }
+
+      setSubmitted(true);
+
+      window.setTimeout(() => {
+        onClose();
+        setSubmitted(false);
+        setEmail("");
+        setError("");
+      }, 2500);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again."
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -116,7 +143,7 @@ function CVEmailModal({
     <>
       <div
         id="cv-modal-overlay"
-        onClick={onClose}
+        onClick={sending ? undefined : onClose}
         style={{
           position: "fixed",
           inset: 0,
@@ -127,6 +154,7 @@ function CVEmailModal({
           animation: "cvFadeIn .25s ease",
         }}
       />
+
       <div
         id="cv-modal-card"
         role="dialog"
@@ -161,6 +189,7 @@ function CVEmailModal({
           <button
             id="cv-modal-close"
             onClick={onClose}
+            disabled={sending}
             aria-label="Close modal"
             style={{
               position: "absolute",
@@ -174,27 +203,25 @@ function CVEmailModal({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              cursor: "pointer",
+              cursor: sending ? "not-allowed" : "pointer",
               color: "#ffffff",
               fontSize: "18px",
               lineHeight: 1,
               transition: "background .2s, transform .2s",
             }}
             onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background =
-                "rgba(255,255,255,0.18)";
-              (e.currentTarget as HTMLButtonElement).style.transform =
-                "scale(1.1)";
+              if (sending) return;
+              e.currentTarget.style.background = "rgba(255,255,255,0.18)";
+              e.currentTarget.style.transform = "scale(1.1)";
             }}
             onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.background =
-                "rgba(255,255,255,0.08)";
-              (e.currentTarget as HTMLButtonElement).style.transform =
-                "scale(1)";
+              e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+              e.currentTarget.style.transform = "scale(1)";
             }}
           >
             ×
           </button>
+
           <div style={{ marginBottom: "20px" }}>
             <div
               style={{
@@ -246,6 +273,7 @@ function CVEmailModal({
               </svg>
             </div>
           </div>
+
           <h2
             id="cv-modal-title"
             style={{
@@ -256,8 +284,9 @@ function CVEmailModal({
               lineHeight: 1.25,
             }}
           >
-            View My R?sum?
+            Get My Résumé
           </h2>
+
           <p
             style={{
               color: "rgba(255,255,255,0.55)",
@@ -266,9 +295,10 @@ function CVEmailModal({
               lineHeight: 1.6,
             }}
           >
-            To receive my CV, please enter your email address below. I'll send
-            it straight to your inbox.
+            Enter your email address and I'll send my latest résumé directly
+            to your inbox.
           </p>
+
           {submitted ? (
             <div
               style={{
@@ -278,6 +308,7 @@ function CVEmailModal({
               }}
             >
               <div style={{ fontSize: "40px", marginBottom: "12px" }}>🎉</div>
+
               <p
                 style={{
                   color: "#ffffff",
@@ -286,10 +317,11 @@ function CVEmailModal({
                   marginBottom: "4px",
                 }}
               >
-                You're all set!
+                Your résumé has been sent!
               </p>
+
               <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px" }}>
-                Check your inbox — the CV is on its way.
+                Please check your inbox, including your spam folder.
               </p>
             </div>
           ) : (
@@ -307,12 +339,14 @@ function CVEmailModal({
               >
                 Your Email
               </label>
+
               <input
                 id="cv-email-input"
                 type="email"
                 autoComplete="email"
                 placeholder="you@example.com"
                 value={email}
+                disabled={sending}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setError("");
@@ -321,7 +355,9 @@ function CVEmailModal({
                   width: "100%",
                   padding: "14px 16px",
                   background: "rgba(255,255,255,0.06)",
-                  border: `1px solid ${error ? "#ff6b6b" : "rgba(255,255,255,0.14)"}`,
+                  border: `1px solid ${
+                    error ? "#ff6b6b" : "rgba(255,255,255,0.14)"
+                  }`,
                   borderRadius: "12px",
                   color: "#ffffff",
                   fontSize: "16px",
@@ -329,18 +365,24 @@ function CVEmailModal({
                   boxSizing: "border-box",
                   transition: "border-color .2s",
                   marginBottom: error ? "6px" : "20px",
+                  opacity: sending ? 0.6 : 1,
                 }}
                 onFocus={(e) => {
-                  (e.currentTarget as HTMLInputElement).style.borderColor =
-                    "rgba(255,255,255,0.4)";
+                  if (!error) {
+                    e.currentTarget.style.borderColor =
+                      "rgba(255,255,255,0.4)";
+                  }
                 }}
                 onBlur={(e) => {
-                  (e.currentTarget as HTMLInputElement).style.borderColor =
-                    error ? "#ff6b6b" : "rgba(255,255,255,0.14)";
+                  e.currentTarget.style.borderColor = error
+                    ? "#ff6b6b"
+                    : "rgba(255,255,255,0.14)";
                 }}
               />
+
               {error && (
                 <p
+                  role="alert"
                   style={{
                     color: "#ff6b6b",
                     fontSize: "12px",
@@ -351,9 +393,11 @@ function CVEmailModal({
                   {error}
                 </p>
               )}
+
               <button
                 id="cv-submit-btn"
                 type="submit"
+                disabled={sending}
                 style={{
                   width: "100%",
                   padding: "15px",
@@ -363,23 +407,24 @@ function CVEmailModal({
                   borderRadius: "12px",
                   fontSize: "15px",
                   fontWeight: 600,
-                  cursor: "pointer",
+                  cursor: sending ? "not-allowed" : "pointer",
+                  opacity: sending ? 0.65 : 1,
                   letterSpacing: "0.01em",
                   transition: "opacity .2s, transform .15s",
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.opacity = "0.88";
-                  (e.currentTarget as HTMLButtonElement).style.transform =
-                    "translateY(-1px)";
+                  if (sending) return;
+                  e.currentTarget.style.opacity = "0.88";
+                  e.currentTarget.style.transform = "translateY(-1px)";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.opacity = "1";
-                  (e.currentTarget as HTMLButtonElement).style.transform =
-                    "translateY(0)";
+                  e.currentTarget.style.opacity = sending ? "0.65" : "1";
+                  e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
-                Send Me the CV →
+                {sending ? "Sending Résumé..." : "Send Me the CV →"}
               </button>
+
               <p
                 style={{
                   color: "rgba(255,255,255,0.3)",
@@ -394,12 +439,32 @@ function CVEmailModal({
           )}
         </div>
       </div>
+
       <style>{`
-                @keyframes cvFadeIn  { from { opacity: 0 }          to { opacity: 1 } }
-                @keyframes cvSlideUp { from { opacity: 0; transform: translateY(28px) scale(.97) } to { opacity: 1; transform: translateY(0) scale(1) } }
-                #cv-email-input::placeholder { color: rgba(255,255,255,0.25); }
-                #cv-email-input:focus { border-color: rgba(255,255,255,0.4) !important; }
-            `}</style>
+        @keyframes cvFadeIn {
+          from { opacity: 0 }
+          to { opacity: 1 }
+        }
+
+        @keyframes cvSlideUp {
+          from {
+            opacity: 0;
+            transform: translateY(28px) scale(.97)
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1)
+          }
+        }
+
+        #cv-email-input::placeholder {
+          color: rgba(255,255,255,0.25);
+        }
+
+        #cv-email-input:focus {
+          border-color: rgba(255,255,255,0.4) !important;
+        }
+      `}</style>
     </>
   );
 
@@ -408,6 +473,7 @@ function CVEmailModal({
 
 export default function Section6() {
   const [modalOpen, setModalOpen] = useState(false);
+
   const openModal = (e: React.MouseEvent) => {
     e.preventDefault();
     setModalOpen(true);
@@ -415,7 +481,11 @@ export default function Section6() {
 
   return (
     <>
-      <CVEmailModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <CVEmailModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+      />
+
       <div className="sec-6-home-5 block-journey pt-120 pb-120 bg-neutral-900 changeless">
         <div className="container">
           <div className="row g-4 align-items-end pb-60">
@@ -430,14 +500,17 @@ export default function Section6() {
                   {ARROW_SVG}
                 </i>
               </span>
+
               <h2 className="text-white reveal-text h3">
                 <RevealText>Education & Experience</RevealText>
               </h2>
+
               <p className="text-white fz-font-lg m-0">
                 Building practical experience through software projects,
                 business websites, and full-stack application development.
               </p>
             </div>
+
             <div className="col-lg-3 ms-lg-auto d-flex justify-content-lg-end">
               <div
                 className="at-btn-group at_fade_anim"
@@ -452,12 +525,14 @@ export default function Section6() {
                 >
                   {ARROW_CIRCLE_SVG}
                 </Link>
+
                 <Link
                   className="at-btn z-index-1 bg-neutral-700"
                   to="https://calendar.app.google/YfbveQGAuJS9kPEv5"
                 >
                   Book a Project Call
                 </Link>
+
                 <Link
                   className="at-btn-circle bg-neutral-700"
                   to="https://calendar.app.google/YfbveQGAuJS9kPEv5"
@@ -468,6 +543,7 @@ export default function Section6() {
               </div>
             </div>
           </div>
+
           <div className="row g-4">
             <div className="col-xxl-4 col-lg-5">
               <div className="alt-portfolio-item mb-30 at-hover-item">
@@ -482,24 +558,26 @@ export default function Section6() {
                     data-value-1="1.5"
                     data-value-2="1"
                     src="/assets/imgs/pages/webp-images/resume.webp"
-                    alt="Technologant"
+                    alt="Hasaan Azeem résumé preview"
                     width={550}
                     height={540}
                     loading="lazy"
                   />
+
                   <div className="alt-portfolio-btn">
                     <div className="content">
                       <h3 className="h2 fw-400 fz-font-3xl text-white mb-0 mt-20">
-                        Click to download my Résumé.
+                        Click to receive my Résumé.
                       </h3>
+
                       <p className="text-white fz-font-md mb-0 mt-10 text-truncate-2 des">
-                        I have developed practical projects across web
-                        applications, ecommerce, automation, and business
-                        software.
+                        Explore my experience across web applications,
+                        ecommerce, automation, and business software.
                       </p>
                     </div>
                   </div>
                 </a>
+
                 <div className="alt-portfolio-content d-flex justify-content-between align-items-center bg-neutral-700">
                   <p className="alt-portfolio-title mb-0 fw-bold">
                     <a
@@ -508,20 +586,26 @@ export default function Section6() {
                       onClick={openModal}
                       className="common-underline text-white"
                     >
-                      Download CV
+                      Get My Résumé
                     </a>
                   </p>
+
                   <span className="alt-portfolio-plus text-white">
                     {PLUS_ICON}
                   </span>
                 </div>
               </div>
             </div>
+
             <div className="col-lg-7 ms-auto pt-80">
               <ul className="journey-list" role="list">
                 {JOURNEY_ITEMS.map((item, i) => (
-                  <li key={i} className="journey-list__item scroll-move-up">
+                  <li
+                    key={i}
+                    className="journey-list__item scroll-move-up"
+                  >
                     <span className="journey-list__date">{item.date}</span>
+
                     <div className="journey-list__body">
                       <h3 className="journey-list__title neutral-0 h6">
                         {item.title}{" "}
@@ -529,8 +613,10 @@ export default function Section6() {
                           {item.company}
                         </span>
                       </h3>
+
                       <p className="journey-list__desc">{item.desc}</p>
                     </div>
+
                     <Link
                       to="#"
                       className="journey-list__link"
