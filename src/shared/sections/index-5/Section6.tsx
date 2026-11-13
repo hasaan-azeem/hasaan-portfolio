@@ -4,7 +4,7 @@ import RevealText from "@/shared/effects/RevealText";
 
 // Home 5 Section 6 - My Journey
 
-const RESUME_URL = "/Hasaan-Azeem-Resume.pdf";
+const RESUME_URL = "/Hasaan_Azeem_Resume.pdf";
 
 const ARROW_SVG = (
   <svg
@@ -140,7 +140,7 @@ export default function Section6() {
             <div className="alt-portfolio-item mb-30 at-hover-item">
               <a
                 href={RESUME_URL}
-                download="Hasaan-Azeem-Resume.pdf"
+                download="Hasaan_Azeem_Resume.pdf"
                 id="cv-download-card"
                 className="alt-portfolio-thumb mb-15 p-relative fix d-block"
                 aria-label="Download Hasaan Azeem résumé"
@@ -174,7 +174,7 @@ export default function Section6() {
                 <p className="alt-portfolio-title mb-0 fw-bold">
                   <a
                     href={RESUME_URL}
-                    download="Hasaan-Azeem-Resume.pdf"
+                    download="Hasaan_Azeem_Resume.pdf"
                     id="cv-download-link"
                     className="common-underline text-white"
                   >
