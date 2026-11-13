@@ -102,11 +102,11 @@ export default function Section2() {
                                         <picture>
                                             <source
                                                 media="(max-width: 767px)"
-                                                srcSet="/assets/imgs/pages/Image_for_Bento_1.png"
+                                                srcSet="/assets/imgs/pages/Image_for_Bento_1.webp"
                                             />
 
                                             <img
-                                                src="/assets/imgs/pages/Image_for_Bento_1.png"
+                                                src="/assets/imgs/pages/Image_for_Bento_1.webp"
                                                 alt="Hasaan Azeem, Full Stack Developer"
                                                 width={600}
                                                 height={400}
@@ -339,7 +339,7 @@ export default function Section2() {
                                                 <div className="img">
 
                                                     <img
-                                                        src="/assets/imgs/pages/We audit everything (242 x 248 px).png"
+                                                        src="/assets/imgs/pages/We audit everything (242 x 248 px).webp"
                                                         alt="Hasaan Azeem, Full Stack Developer"
                                                         width={242}
                                                         height={248}

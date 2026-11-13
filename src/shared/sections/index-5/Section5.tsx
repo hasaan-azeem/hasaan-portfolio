@@ -6,11 +6,11 @@ import type { Swiper as SwiperInstance } from "swiper";
 import { Autoplay, FreeMode, Thumbs } from "swiper/modules";
 
 const AVATARS = [
-    { src: "/assets/imgs/pages/Img2/3.png", alt: "Hasaan Azeem", thumbClass: "thumb-slide-1" },
-    { src: "/assets/imgs/pages/Img2/2.png", alt: "Hasaan Azeem", thumbClass: "thumb-slide-2" },
-    { src: "/assets/imgs/pages/Img2/1.png", alt: "Hasaan Azeem", thumbClass: "thumb-slide-3" },
-    { src: "/assets/imgs/pages/Img2/4.png", alt: "Hasaan Azeem", thumbClass: "thumb-slide-4" },
-    { src: "/assets/imgs/pages/Img2/5.png", alt: "Hasaan Azeem", thumbClass: "thumb-slide-5" },
+    { src: "/assets/imgs/pages/Img2/3.webp", alt: "Hasaan Azeem", thumbClass: "thumb-slide-1" },
+    { src: "/assets/imgs/pages/Img2/2.webp", alt: "Hasaan Azeem", thumbClass: "thumb-slide-2" },
+    { src: "/assets/imgs/pages/Img2/1.webp", alt: "Hasaan Azeem", thumbClass: "thumb-slide-3" },
+    { src: "/assets/imgs/pages/Img2/4.webp", alt: "Hasaan Azeem", thumbClass: "thumb-slide-4" },
+    { src: "/assets/imgs/pages/Img2/5.webp", alt: "Hasaan Azeem", thumbClass: "thumb-slide-5" },
 ];
 
 const QUOTE_TEXT = (

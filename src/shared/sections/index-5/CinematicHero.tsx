@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import SocialLinks from "@/shared/elements/SocialLinks";
 import "./CinematicHero.css";
 
-const BASE_SRC = "/assets/imgs/pages/webp-images/hero.png";
+const BASE_SRC = "/assets/imgs/pages/webp-images/hero.webp";
 
 const BOOKING_URL = "https://calendar.app.google/AUAQE4J2iuNRHGSy6";
 
