@@ -1,106 +1,182 @@
+
 /* =========================================================
    CINEMATIC HERO
-   Original design + scoped cursor trail layer
+   GEOMETRIC FRAGMENTS / DARK CHROME
 ========================================================= */
 
 .ch {
   --cx: 50%;
   --cy: 30%;
+  --accent: #a6ffb1;
 
   position: relative;
   margin: 0;
-  border-radius: 0;
   min-height: 100vh;
   min-height: 100svh;
   overflow: hidden;
-  color: #fff;
   isolation: isolate;
 
-  background: radial-gradient(
-    120% 90% at 18% 10%,
-    #ff8a1f 0%,
-    #f0501a 38%,
-    #b5200f 72%,
-    #7d0f0a 100%
-  );
+  color: #fff;
+
+  background:
+    radial-gradient(
+      ellipse at 52% 40%,
+      rgba(91, 255, 112, 0.09),
+      transparent 48%
+    ),
+    radial-gradient(
+      ellipse at 100% 0%,
+      rgba(35, 85, 65, 0.16),
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 0% 100%,
+      rgba(45, 70, 95, 0.12),
+      transparent 40%
+    ),
+    #080a09;
 }
 
-/* Background texture */
+/* =========================================================
+   BACKGROUND GRAIN
+========================================================= */
+
 .ch::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1;
-  opacity: 0.18;
-  mix-blend-mode: overlay;
+  z-index: 4;
+  opacity: 0.11;
   pointer-events: none;
+  mix-blend-mode: screen;
 
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
 }
 
-/* Bottom gradient overlay */
+/* =========================================================
+   CINEMATIC OVERLAY
+========================================================= */
+
 .ch::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 3;
   pointer-events: none;
 
   background: linear-gradient(
     to top,
-    rgba(80, 10, 5, 0.72) 0%,
-    rgba(80, 10, 5, 0.35) 40%,
-    rgba(80, 10, 5, 0) 70%
+    rgba(3, 6, 5, 0.85) 0%,
+    rgba(3, 6, 5, 0.3) 35%,
+    transparent 75%
   );
 }
 
-/* Main container */
-.ch__inner {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  min-height: 100svh;
-  padding: 92px 20px 22px;
+/* =========================================================
+   AMBIENT BACKGROUND
+========================================================= */
+
+.ch__ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ch__glow {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(90px);
+}
+
+.ch__glow--1 {
+  width: min(55vw, 700px);
+  aspect-ratio: 1;
+  top: 4%;
+  left: 35%;
+
+  background: rgba(90, 255, 116, 0.07);
+
+  animation: ch-glow-float 12s ease-in-out infinite alternate;
+}
+
+.ch__glow--2 {
+  width: min(40vw, 500px);
+  aspect-ratio: 1;
+  right: -10%;
+  bottom: -15%;
+
+  background: rgba(58, 104, 83, 0.1);
+
+  animation: ch-glow-float 16s ease-in-out infinite alternate-reverse;
+}
+
+.ch__grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.11;
+
+  background-image:
+    linear-gradient(
+      rgba(166, 255, 177, 0.055) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(166, 255, 177, 0.055) 1px,
+      transparent 1px
+    );
+
+  background-size: 72px 72px;
+
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 20%,
+    #000 75%,
+    transparent
+  );
 }
 
 /* =========================================================
-   DECORATIVE RINGS
+   THREE.JS CANVAS
 ========================================================= */
 
-.ch__ring {
+.ch__three {
   position: absolute;
+  inset: 0;
+  z-index: 1;
 
-  left: calc(var(--cx) - var(--d) / 2);
-  top: calc(var(--cy) - var(--d) / 2);
+  width: 100%;
+  height: 100%;
 
-  width: var(--d);
-  aspect-ratio: 1;
-
-  border: 1px solid rgba(255, 255, 255, 0.26);
-  border-radius: 50%;
-
+  overflow: hidden;
   pointer-events: none;
-  z-index: 0;
-
-  animation: ch-ring 1.4s 0.2s both cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-.ch__ring--1 {
-  --d: min(112vw, 520px);
+.ch__three canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
-.ch__ring--2 {
-  --d: min(150vw, 720px);
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
 
-  border-color: rgba(255, 255, 255, 0.18);
-  animation-delay: 0.35s;
-}
+.ch__inner {
+  position: relative;
+  z-index: 2;
 
-.ch__ring--3 {
-  --d: min(190vw, 920px);
+  display: flex;
+  flex-direction: column;
 
-  border-color: rgba(255, 255, 255, 0.12);
-  animation-delay: 0.5s;
+  min-height: 100vh;
+  min-height: 100svh;
+
+  padding: 92px 20px 22px;
 }
 
 /* =========================================================
@@ -109,7 +185,7 @@
 
 .ch__head {
   position: relative;
-  z-index: 2;
+  z-index: 3;
 }
 
 .ch__eyebrow {
@@ -123,7 +199,7 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
 
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.7);
 
   margin: 0 0 14px;
 }
@@ -140,6 +216,7 @@
 
 .ch__title span {
   display: block;
+  color: var(--accent);
 }
 
 /* =========================================================
@@ -155,31 +232,26 @@
 
   overflow: hidden;
   isolation: isolate;
-  z-index: 0;
+  z-index: 2;
 
   -webkit-mask-image: linear-gradient(#000 72%, transparent 100%);
-
   mask-image: linear-gradient(#000 72%, transparent 100%);
 }
 
 /* =========================================================
-   CURSOR TRAIL LAYER (SCOPED)
-   
-   IMPORTANT:
-   This layer stays behind the original portrait.
+   CURSOR IMAGE TRAIL
 ========================================================= */
-
+/* 
 .ch__cursor-trail {
   position: absolute;
   inset: 0;
 
-  z-index: 0;
+  z-index: 1;
 
   pointer-events: none;
   overflow: hidden;
 }
 
-/* Individual trail images */
 .ch__trail-img {
   position: absolute;
 
@@ -200,40 +272,35 @@
   transform-origin: center;
   will-change: transform, opacity;
 
-  filter: saturate(1.02) contrast(1.02);
+  filter: saturate(0.85) contrast(1.08) brightness(0.92);
 
   animation: ch-trail-life 1.65s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
 }
 
-/* Smooth trail animation */
 @keyframes ch-trail-life {
   0% {
     opacity: 0;
-
     transform: translate(-50%, -50%) rotate(var(--trail-rotation)) scale(0.15);
   }
 
   18% {
     opacity: 0.95;
-
     transform: translate(-50%, -50%) rotate(var(--trail-rotation)) scale(1);
   }
 
   65% {
     opacity: 0.85;
-
     transform: translate(-50%, -50%) rotate(var(--trail-rotation)) scale(0.95);
   }
 
   100% {
     opacity: 0;
-
     transform: translate(-50%, -50%) rotate(var(--trail-rotation)) scale(0.75);
   }
-}
+} */
 
 /* =========================================================
-   ORIGINAL HERO PORTRAIT
+   ORIGINAL PORTRAIT
 ========================================================= */
 
 .ch__figure {
@@ -247,7 +314,7 @@
 
   transform: translateX(-50%);
 
-  z-index: 1;
+  z-index: 2;
 }
 
 .ch__base {
@@ -262,18 +329,20 @@
   object-fit: contain;
   object-position: center;
 
-  z-index: 1;
+  z-index: 2;
 
-  filter: drop-shadow(0 0 40px rgba(255, 120, 30, 0.25));
+  filter:
+    drop-shadow(0 0 35px rgba(105, 255, 125, 0.1))
+    drop-shadow(0 20px 55px rgba(0, 0, 0, 0.4));
 }
 
 /* =========================================================
-   DESCRIPTION + CTA
+   DESCRIPTION AND CTA
 ========================================================= */
 
 .ch__body {
   position: relative;
-  z-index: 2;
+  z-index: 3;
 
   margin-top: 12px;
 }
@@ -284,7 +353,7 @@
 
   margin: 0 0 20px;
 
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.8);
 
   max-width: 46ch;
 }
@@ -296,6 +365,22 @@
 
   gap: 14px 18px;
 }
+
+.ch__cta .at-btn {
+  background-color: #fff;
+  color: #111;
+}
+
+.ch__cta .at-btn:hover {
+  color: #111;
+}
+
+.ch__cta .tsl--light a {
+  background-color: #fff;
+  color: #111;
+}
+
+/* Existing button compatibility */
 
 .ch__btn {
   display: inline-flex;
@@ -335,7 +420,7 @@
   margin: 26px 0 0;
   padding: 20px 0 0;
 
-  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  border-top: 1px solid rgba(166, 255, 177, 0.16);
 
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -343,7 +428,7 @@
   gap: 10px;
 
   position: relative;
-  z-index: 2;
+  z-index: 3;
 }
 
 .ch__stat {
@@ -375,6 +460,8 @@
   font-size: 0.5em;
   top: -0.55em;
   margin-left: 2px;
+
+  color: var(--accent);
 }
 
 .ch__label {
@@ -392,7 +479,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
 
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.58);
 }
 
 .ch__dot {
@@ -400,7 +487,7 @@
 }
 
 /* =========================================================
-   KEYFRAME ANIMATIONS
+   ANIMATIONS
 ========================================================= */
 
 @keyframes ch-up {
@@ -415,25 +502,13 @@
   }
 }
 
-@keyframes ch-fade {
+@keyframes ch-glow-float {
   from {
-    opacity: 0;
+    transform: translate3d(-3%, -2%, 0) scale(0.95);
   }
 
   to {
-    opacity: 1;
-  }
-}
-
-@keyframes ch-ring {
-  from {
-    opacity: 0;
-    transform: scale(0.86);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
+    transform: translate3d(4%, 3%, 0) scale(1.08);
   }
 }
 
@@ -475,9 +550,9 @@
   .ch::after {
     background: radial-gradient(
       75% 80% at 0% 100%,
-      rgba(80, 10, 5, 0.78) 0%,
-      rgba(80, 10, 5, 0.45) 45%,
-      rgba(80, 10, 5, 0) 78%
+      rgba(3, 6, 5, 0.88) 0%,
+      rgba(3, 6, 5, 0.42) 45%,
+      transparent 78%
     );
   }
 
@@ -533,7 +608,8 @@
     margin: 0 0 20px;
   }
 
-  /* Stats positioned around orbit rings */
+  /* Stats positioned around the portrait */
+
   .ch__stats {
     display: block;
 
@@ -570,33 +646,29 @@
 
     border-radius: 50%;
 
-    background: #fff;
+    background: var(--accent);
 
     box-shadow:
-      0 0 0 4px rgba(255, 255, 255, 0.18),
-      0 0 18px rgba(255, 255, 255, 0.8);
+      0 0 0 4px rgba(166, 255, 177, 0.12),
+      0 0 18px rgba(166, 255, 177, 0.65);
   }
 
   .ch__num {
     font-size: clamp(40px, 3.8vw, 60px);
   }
 
-  /* Position on ring */
   .ch__stat:nth-child(1) {
     left: calc(var(--cx) + min(64vh, 52vw) * 0.5 * 0.8);
-
     top: calc(var(--cy) - min(64vh, 52vw) * 0.5 * 0.6 - 10px);
   }
 
   .ch__stat:nth-child(2) {
     left: calc(var(--cx) + min(92vh, 74vw) * 0.5 * 0.99);
-
     top: calc(var(--cy) + min(92vh, 74vw) * 0.5 * 0.12 - 20px);
   }
 
   .ch__stat:nth-child(3) {
     left: calc(var(--cx) + min(120vh, 96vw) * 0.5 * 0.74);
-
     top: calc(var(--cy) + min(120vh, 96vw) * 0.5 * 0.66 - 20px);
   }
 }
@@ -621,11 +693,78 @@
 }
 
 /* =========================================================
-   REDUCED MOTION ACCESSIBILITY
+   MOBILE PERFORMANCE
+========================================================= */
+
+@media (max-width: 575px) {
+  .ch__three {
+    opacity: 0.85;
+  }
+
+  .ch__glow {
+    filter: blur(65px);
+  }
+}
+
+/* =========================================
+   MOBILE PORTRAIT IMPROVEMENTS
+========================================= */
+
+@media (max-width: 767px) {
+  .ch__stage {
+    width: 100%;
+    height: clamp(420px, 115vw, 540px);
+    min-height: 420px;
+    margin: 0 auto;
+    overflow: visible;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .ch__figure {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .ch__base {
+    display: block;
+    width: min(94vw, 440px);
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: contain;
+    object-position: center bottom;
+    margin: 0 auto;
+  }
+
+  .ch__body {
+    margin-top: 20px;
+  }
+}
+
+/* Smaller mobile screens */
+@media (max-width: 380px) {
+  .ch__stage {
+    height: 430px;
+  }
+
+  .ch__base {
+    width: 100vw;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
 ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .ch * {
+  .ch *,
+  .ch *::before,
+  .ch *::after {
     animation: none !important;
     transition: none !important;
   }

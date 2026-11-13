@@ -1,8 +1,8 @@
-
-import { useEffect, useRef } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import SocialLinks from "@/shared/elements/SocialLinks";
 import "./CinematicHero.css";
 
+const HeroThreeScene = lazy(() => import("./HeroThreeScene"));
 const BASE_SRC = "/assets/imgs/pages/webp-images/hero.webp";
 
 const BOOKING_URL = "https://calendar.app.google/AUAQE4J2iuNRHGSy6";
@@ -28,143 +28,189 @@ const STATS = [
   { n: "10", label: "Technologies applied" },
 ];
 
-const CURSOR_TRAIL_IMAGES = [
-  "/assets/imgs/pages/cursor-trail/cursor%20trail%201.webp",
-  "/assets/imgs/pages/cursor-trail/cursor%20trail%202.webp",
-  "/assets/imgs/pages/cursor-trail/cursor%20trail%203.webp",
-  "/assets/imgs/pages/cursor-trail/cursor%20trail%204.webp",
-  "/assets/imgs/pages/cursor-trail/cursor%20trail%205.webp",
-  "/assets/imgs/pages/cursor-trail/cursor%20trail%206.webp",
-  "/assets/imgs/pages/cursor-trail/cursor%20trail%207.webp",
-  "/assets/imgs/pages/cursor-trail/cursor%20trail%208.webp",
-];
+// const CURSOR_TRAIL_IMAGES = [
+//   "/assets/imgs/pages/cursor-trail/cursor%20trail%201.webp",
+//   "/assets/imgs/pages/cursor-trail/cursor%20trail%202.webp",
+//   "/assets/imgs/pages/cursor-trail/cursor%20trail%203.webp",
+//   "/assets/imgs/pages/cursor-trail/cursor%20trail%204.webp",
+//   "/assets/imgs/pages/cursor-trail/cursor%20trail%205.webp",
+//   "/assets/imgs/pages/cursor-trail/cursor%20trail%206.webp",
+//   "/assets/imgs/pages/cursor-trail/cursor%20trail%207.webp",
+//   "/assets/imgs/pages/cursor-trail/cursor%20trail%208.webp",
+// ];
+
+/* =========================================================
+   MAIN HERO
+========================================================= */
 
 export default function CinematicHero() {
-  const stageRef = useRef<HTMLDivElement>(null);
-  const trailRef = useRef<HTMLDivElement>(null);
+  // const stageRef = useRef<HTMLDivElement>(null);
+  // const trailRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [showThree, setShowThree] = useState(false);
 
   useEffect(() => {
-    const stage = stageRef.current;
-    const layer = trailRef.current;
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    if (!stage || !layer) return;
-
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    if (reduceMotion) return;
-
-    const MAX_TRAIL_LENGTH = 24;
-    const MOUSE_THRESHOLD = 65;
-
-    let lastX = 0;
-    let lastY = 0;
-    let hasLastPosition = false;
-    let disposed = false;
-
-    const trail: HTMLImageElement[] = [];
-
-    const createTrailImage = (x: number, y: number) => {
-      const img = document.createElement("img");
-
-      const randomIndex = Math.floor(
-        Math.random() * CURSOR_TRAIL_IMAGES.length,
-      );
-
-      const rotation = (Math.random() - 0.5) * 35;
-
-      img.className = "ch__trail-img";
-      img.src = CURSOR_TRAIL_IMAGES[randomIndex];
-      img.alt = "";
-      img.draggable = false;
-      img.decoding = "async";
-
-      img.style.left = `${x}px`;
-      img.style.top = `${y}px`;
-
-      img.style.setProperty("--trail-rotation", `${rotation}deg`);
-
-      img.addEventListener(
-        "animationend",
-        () => {
-          img.remove();
-
-          const index = trail.indexOf(img);
-
-          if (index !== -1) {
-            trail.splice(index, 1);
-          }
-        },
-        { once: true },
-      );
-
-      layer.appendChild(img);
-      trail.push(img);
-
-      if (trail.length > MAX_TRAIL_LENGTH) {
-        const oldest = trail.shift();
-        oldest?.remove();
-      }
+    const updateMotionPreference = () => {
+      setReducedMotion(media.matches);
     };
 
-    const onPointerMove = (event: PointerEvent) => {
-      if (disposed) return;
+    updateMotionPreference();
 
-      if (event.pointerType !== "mouse") return;
+    media.addEventListener("change", updateMotionPreference);
 
-      const rect = stage.getBoundingClientRect();
+    if (!media.matches) {
+      const idleWindow = window.setTimeout(() => setShowThree(true), 1200);
 
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-
-      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
-        hasLastPosition = false;
-        return;
-      }
-
-      if (hasLastPosition) {
-        const distance = Math.hypot(x - lastX, y - lastY);
-
-        if (distance < MOUSE_THRESHOLD) return;
-      }
-
-      lastX = x;
-      lastY = y;
-      hasLastPosition = true;
-
-      createTrailImage(x, y);
-    };
-
-    const onPointerLeave = () => {
-      hasLastPosition = false;
-    };
-
-    stage.addEventListener("pointermove", onPointerMove, {
-      passive: true,
-    });
-
-    stage.addEventListener("pointerleave", onPointerLeave);
+      return () => {
+        media.removeEventListener("change", updateMotionPreference);
+        window.clearTimeout(idleWindow);
+      };
+    }
 
     return () => {
-      disposed = true;
-
-      stage.removeEventListener("pointermove", onPointerMove);
-      stage.removeEventListener("pointerleave", onPointerLeave);
-
-      trail.forEach((img) => img.remove());
-      trail.length = 0;
-
-      layer.replaceChildren();
+      media.removeEventListener("change", updateMotionPreference);
     };
   }, []);
 
+  /* =========================================================
+     ORIGINAL CURSOR IMAGE TRAIL
+  ========================================================= */
+
+  // useEffect(() => {
+  //   const stage = stageRef.current;
+  //   const layer = trailRef.current;
+
+  //   if (!stage || !layer || reducedMotion) return;
+
+  //   const MAX_TRAIL_LENGTH = 24;
+  //   const MOUSE_THRESHOLD = 65;
+
+  //   let lastX = 0;
+  //   let lastY = 0;
+  //   let hasLastPosition = false;
+  //   let disposed = false;
+
+  //   const trail: HTMLImageElement[] = [];
+
+  //   const createTrailImage = (x: number, y: number) => {
+  //     const img = document.createElement("img");
+
+  //     const randomIndex = Math.floor(
+  //       Math.random() * CURSOR_TRAIL_IMAGES.length,
+  //     );
+
+  //     const rotation = (Math.random() - 0.5) * 35;
+
+  //     img.className = "ch__trail-img";
+  //     img.src = CURSOR_TRAIL_IMAGES[randomIndex];
+  //     img.alt = "";
+  //     img.draggable = false;
+  //     img.decoding = "async";
+
+  //     img.style.left = `${x}px`;
+  //     img.style.top = `${y}px`;
+
+  //     img.style.setProperty("--trail-rotation", `${rotation}deg`);
+
+  //     img.addEventListener(
+  //       "animationend",
+  //       () => {
+  //         img.remove();
+
+  //         const index = trail.indexOf(img);
+
+  //         if (index !== -1) {
+  //           trail.splice(index, 1);
+  //         }
+  //       },
+  //       { once: true },
+  //     );
+
+  //     layer.appendChild(img);
+  //     trail.push(img);
+
+  //     if (trail.length > MAX_TRAIL_LENGTH) {
+  //       const oldest = trail.shift();
+  //       oldest?.remove();
+  //     }
+  //   };
+
+  //   const onPointerMove = (event: PointerEvent) => {
+  //     if (disposed || event.pointerType !== "mouse") return;
+
+  //     const rect = stage.getBoundingClientRect();
+
+  //     const x = event.clientX - rect.left;
+  //     const y = event.clientY - rect.top;
+
+  //     if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+  //       hasLastPosition = false;
+  //       return;
+  //     }
+
+  //     if (hasLastPosition) {
+  //       const distance = Math.hypot(x - lastX, y - lastY);
+
+  //       if (distance < MOUSE_THRESHOLD) return;
+  //     }
+
+  //     lastX = x;
+  //     lastY = y;
+  //     hasLastPosition = true;
+
+  //     createTrailImage(x, y);
+  //   };
+
+  //   const onPointerLeave = () => {
+  //     hasLastPosition = false;
+  //   };
+
+  //   stage.addEventListener("pointermove", onPointerMove, {
+  //     passive: true,
+  //   });
+
+  //   stage.addEventListener("pointerleave", onPointerLeave);
+
+  //   return () => {
+  //     disposed = true;
+
+  //     stage.removeEventListener("pointermove", onPointerMove);
+  //     stage.removeEventListener("pointerleave", onPointerLeave);
+
+  //     trail.forEach((img) => img.remove());
+  //     trail.length = 0;
+
+  //     layer.replaceChildren();
+  //   };
+  // }, [reducedMotion]);
+
   return (
-    <section className="ch" aria-label="Introduction">
-      {/* Decorative rings */}
+    <section ref={sectionRef} className="ch" aria-label="Introduction">
+      {/* Background atmosphere */}
+      <div className="ch__ambient" aria-hidden="true">
+        <span className="ch__glow ch__glow--1" />
+        <span className="ch__glow ch__glow--2" />
+        <span className="ch__grid" />
+      </div>
+
+      {/* Three.js background */}
+      {showThree && !reducedMotion ? (
+        <Suspense fallback={null}>
+          <HeroThreeScene
+            reducedMotion={reducedMotion}
+            sectionRef={sectionRef}
+          />
+        </Suspense>
+      ) : null}
+
+      {/* Decorative background details
       <span className="ch__ring ch__ring--1" aria-hidden="true" />
       <span className="ch__ring ch__ring--2" aria-hidden="true" />
-      <span className="ch__ring ch__ring--3" aria-hidden="true" />
+      <span className="ch__ring ch__ring--3" aria-hidden="true" /> */}
 
       <div className="ch__inner">
         {/* Hero heading */}
@@ -179,13 +225,7 @@ export default function CinematicHero() {
         </div>
 
         {/* Portrait stage */}
-        <div className="ch__stage" ref={stageRef}>
-          <div
-            className="ch__cursor-trail"
-            ref={trailRef}
-            aria-hidden="true"
-          />
-
+        <div className="ch__stage">
           <div className="ch__figure">
             <img
               className="ch__base mt-50"
@@ -203,30 +243,28 @@ export default function CinematicHero() {
         {/* Description and CTA */}
         <div className="ch__body">
           <p className="ch__lead">
-            I&apos;m Hasaan, a Full Stack Developer building useful web applications,
+            I'm Hasaan, a Full Stack Developer building useful web applications,
             business-focused digital products, and AI-powered workflows, while
             sharing what I learn and build.
           </p>
 
           <div className="ch__cta">
-            
+            <a
+              className="at-btn"
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>
+                <span className="text-1">Book an appointment</span>
+                <span className="text-2">Book an appointment</span>
+              </span>
 
-           <a
-  className="at-btn"
-  href={BOOKING_URL}
-  target="_blank"
-  rel="noopener noreferrer"
->
-  <span>
-    <span className="text-1">Book an appointment</span>
-    <span className="text-2">Book an appointment</span>
-  </span>
-
-  <i>
-    {ARROW_SVG}
-    {ARROW_SVG}
-  </i>
-</a>
+              <i>
+                {ARROW_SVG}
+                {ARROW_SVG}
+              </i>
+            </a>
 
             <SocialLinks light />
           </div>

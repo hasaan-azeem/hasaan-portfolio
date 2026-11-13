@@ -1,13 +1,12 @@
 import "./layout-fixes.css";
 import { Outlet } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Header2 from "@/shared/header/Header2";
 import Header5 from "@/shared/header/Header5";
 import Footer2 from "@/shared/footer/Footer2";
 import Footer5 from "@/shared/footer/Footer5";
 import SideBar from "@/shared/sidebar/SideBar";
 import { MobileMenuCloneProvider } from "@/shared/mobile-menu/MobileMenuCloneContext";
-import GlobalEffects from "@/shared/effects/GlobalEffects";
 import ThemeRouteSync from "@/shared/effects/ThemeRouteSync";
 import BackToTop from "@/shared/elements/BackToTop";
 import SmoothScrollEffect from "@/shared/effects/SmoothScrollEffect";
@@ -28,6 +27,25 @@ const FOOTER_COMPONENTS: Record<number, React.ComponentType> = {
   2: Footer2 as unknown as React.ComponentType,
   5: Footer5,
 };
+
+const GlobalEffects = lazy(() => import("@/shared/effects/GlobalEffects"));
+
+function DeferredGlobalEffects() {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setEnabled(true), 1200);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  if (!enabled) return null;
+
+  return (
+    <Suspense fallback={null}>
+      <GlobalEffects />
+    </Suspense>
+  );
+}
 
 export type MainLayoutProps = {
   headerStyle?: number;
@@ -129,7 +147,7 @@ export default function MainLayout({
     <MobileMenuCloneProvider>
       <div className="px-blur-bottom" />
       <SmoothScrollEffect />
-      <GlobalEffects />
+      <DeferredGlobalEffects />
       <ThemeRouteSync />
       <HeaderComponent
         {...(headerProps ?? {})}
