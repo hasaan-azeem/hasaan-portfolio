@@ -1,10 +1,10 @@
 
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { createPortal } from "react-dom";
 import RevealText from "@/shared/effects/RevealText";
 
-// Home 5 Section 6 - Projects & Technical Skills (My Journey)
+// Home 5 Section 6 - My Journey
+
+const RESUME_URL = "/Hasaan-Azeem-Resume.pdf";
 
 const ARROW_SVG = (
   <svg
@@ -75,562 +75,157 @@ const JOURNEY_ITEMS = [
   },
 ];
 
-function CVEmailModal({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
-  const [sending, setSending] = useState(false);
-
-  const validateEmail = (val: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const normalizedEmail = email.trim();
-
-    if (!validateEmail(normalizedEmail)) {
-      setError("Enter a valid email address, please.");
-      return;
-    }
-
-    setError("");
-    setSending(true);
-
-    try {
-      const response = await fetch("/api/send-cv", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: normalizedEmail }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to send your resume.");
-      }
-
-      setSubmitted(true);
-
-      window.setTimeout(() => {
-        onClose();
-        setSubmitted(false);
-        setEmail("");
-        setError("");
-      }, 2500);
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Please try again."
-      );
-    } finally {
-      setSending(false);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  const modalContent = (
-    <>
-      <div
-        id="cv-modal-overlay"
-        onClick={sending ? undefined : onClose}
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 9998,
-          background: "rgba(0,0,0,0.72)",
-          backdropFilter: "blur(6px)",
-          WebkitBackdropFilter: "blur(6px)",
-          animation: "cvFadeIn .25s ease",
-        }}
-      />
-
-      <div
-        id="cv-modal-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cv-modal-title"
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 9999,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "16px",
-          pointerEvents: "none",
-        }}
-      >
-        <div
-          style={{
-            pointerEvents: "auto",
-            background: "linear-gradient(145deg, #1a1a1a 0%, #111111 100%)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            borderRadius: "20px",
-            padding: "clamp(28px, 6vw, 48px) clamp(24px, 5vw, 44px)",
-            width: "100%",
-            maxWidth: "480px",
-            boxShadow:
-              "0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05)",
-            animation: "cvSlideUp .3s cubic-bezier(.34,1.56,.64,1)",
-            position: "relative",
-          }}
-        >
-          <button
-            id="cv-modal-close"
-            onClick={onClose}
-            disabled={sending}
-            aria-label="Close modal"
-            style={{
-              position: "absolute",
-              top: "16px",
-              right: "18px",
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              borderRadius: "50%",
-              width: "36px",
-              height: "36px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: sending ? "not-allowed" : "pointer",
-              color: "#ffffff",
-              fontSize: "18px",
-              lineHeight: 1,
-              transition: "background .2s, transform .2s",
-            }}
-            onMouseEnter={(e) => {
-              if (sending) return;
-              e.currentTarget.style.background = "rgba(255,255,255,0.18)";
-              e.currentTarget.style.transform = "scale(1.1)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.08)";
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-          >
-            ×
-          </button>
-
-          <div style={{ marginBottom: "20px" }}>
-            <div
-              style={{
-                width: "52px",
-                height: "52px",
-                borderRadius: "14px",
-                background: "linear-gradient(135deg, #3b3b3b 0%, #2a2a2a 100%)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M14 2V8H20"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M12 18V12"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M9 15L12 18L15 15"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-          </div>
-
-          <h2
-            id="cv-modal-title"
-            style={{
-              color: "#ffffff",
-              fontSize: "clamp(20px, 4vw, 26px)",
-              fontWeight: 600,
-              marginBottom: "8px",
-              lineHeight: 1.25,
-            }}
-          >
-            Get My Résumé
-          </h2>
-
-          <p
-            style={{
-              color: "rgba(255,255,255,0.55)",
-              fontSize: "14px",
-              marginBottom: "28px",
-              lineHeight: 1.6,
-            }}
-          >
-            Enter your email address and I'll send my latest résumé directly
-            to your inbox.
-          </p>
-
-          {submitted ? (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "24px 0",
-                animation: "cvFadeIn .3s ease",
-              }}
-            >
-              <div style={{ fontSize: "40px", marginBottom: "12px" }}>🎉</div>
-
-              <p
-                style={{
-                  color: "#ffffff",
-                  fontWeight: 600,
-                  fontSize: "16px",
-                  marginBottom: "4px",
-                }}
-              >
-                Your résumé has been sent!
-              </p>
-
-              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px" }}>
-                Please check your inbox, including your spam folder.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} noValidate>
-              <label
-                htmlFor="cv-email-input"
-                style={{
-                  display: "block",
-                  color: "rgba(255,255,255,0.7)",
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  marginBottom: "8px",
-                  letterSpacing: "0.02em",
-                }}
-              >
-                Your Email
-              </label>
-
-              <input
-                id="cv-email-input"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                value={email}
-                disabled={sending}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError("");
-                }}
-                style={{
-                  width: "100%",
-                  padding: "14px 16px",
-                  background: "rgba(255,255,255,0.06)",
-                  border: `1px solid ${
-                    error ? "#ff6b6b" : "rgba(255,255,255,0.14)"
-                  }`,
-                  borderRadius: "12px",
-                  color: "#ffffff",
-                  fontSize: "16px",
-                  outline: "none",
-                  boxSizing: "border-box",
-                  transition: "border-color .2s",
-                  marginBottom: error ? "6px" : "20px",
-                  opacity: sending ? 0.6 : 1,
-                }}
-                onFocus={(e) => {
-                  if (!error) {
-                    e.currentTarget.style.borderColor =
-                      "rgba(255,255,255,0.4)";
-                  }
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = error
-                    ? "#ff6b6b"
-                    : "rgba(255,255,255,0.14)";
-                }}
-              />
-
-              {error && (
-                <p
-                  role="alert"
-                  style={{
-                    color: "#ff6b6b",
-                    fontSize: "12px",
-                    marginBottom: "16px",
-                    marginTop: "2px",
-                  }}
-                >
-                  {error}
-                </p>
-              )}
-
-              <button
-                id="cv-submit-btn"
-                type="submit"
-                disabled={sending}
-                style={{
-                  width: "100%",
-                  padding: "15px",
-                  background: "#ffffff",
-                  color: "#111111",
-                  border: "none",
-                  borderRadius: "12px",
-                  fontSize: "15px",
-                  fontWeight: 600,
-                  cursor: sending ? "not-allowed" : "pointer",
-                  opacity: sending ? 0.65 : 1,
-                  letterSpacing: "0.01em",
-                  transition: "opacity .2s, transform .15s",
-                }}
-                onMouseEnter={(e) => {
-                  if (sending) return;
-                  e.currentTarget.style.opacity = "0.88";
-                  e.currentTarget.style.transform = "translateY(-1px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.opacity = sending ? "0.65" : "1";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
-              >
-                {sending ? "Sending Résumé..." : "Send Me the CV →"}
-              </button>
-
-              <p
-                style={{
-                  color: "rgba(255,255,255,0.3)",
-                  fontSize: "12px",
-                  textAlign: "center",
-                  marginTop: "14px",
-                }}
-              >
-                No spam. Your email is safe with me.
-              </p>
-            </form>
-          )}
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes cvFadeIn {
-          from { opacity: 0 }
-          to { opacity: 1 }
-        }
-
-        @keyframes cvSlideUp {
-          from {
-            opacity: 0;
-            transform: translateY(28px) scale(.97)
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1)
-          }
-        }
-
-        #cv-email-input::placeholder {
-          color: rgba(255,255,255,0.25);
-        }
-
-        #cv-email-input:focus {
-          border-color: rgba(255,255,255,0.4) !important;
-        }
-      `}</style>
-    </>
-  );
-
-  return createPortal(modalContent, document.body);
-}
-
 export default function Section6() {
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const openModal = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setModalOpen(true);
-  };
-
   return (
-    <>
-      <CVEmailModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-      />
-
-      <div className="sec-6-home-5 block-journey pt-120 pb-120 bg-neutral-900 changeless">
-        <div className="container">
-          <div className="row g-4 align-items-end pb-60">
-            <div className="col-xxl-7 col-lg-9">
-              <span className="at-btn common-black bg-transparent mb-10 rounded-0 p-0">
-                <span className="text-uppercase text-white">
-                  <span className="text-1">My Journey</span>
-                  <span className="text-2">My Journey</span>
-                </span>
-                <i>
-                  {ARROW_SVG}
-                  {ARROW_SVG}
-                </i>
+    <div className="sec-6-home-5 block-journey pt-120 pb-120 bg-neutral-900 changeless">
+      <div className="container">
+        <div className="row g-4 align-items-end pb-60">
+          <div className="col-xxl-7 col-lg-9">
+            <span className="at-btn common-black bg-transparent mb-10 rounded-0 p-0">
+              <span className="text-uppercase text-white">
+                <span className="text-1">My Journey</span>
+                <span className="text-2">My Journey</span>
               </span>
+              <i>
+                {ARROW_SVG}
+                {ARROW_SVG}
+              </i>
+            </span>
 
-              <h2 className="text-white reveal-text h3">
-                <RevealText>Education & Experience</RevealText>
-              </h2>
+            <h2 className="text-white reveal-text h3">
+              <RevealText>Education & Experience</RevealText>
+            </h2>
 
-              <p className="text-white fz-font-lg m-0">
-                Building practical experience through software projects,
-                business websites, and full-stack application development.
-              </p>
-            </div>
-
-            <div className="col-lg-3 ms-lg-auto d-flex justify-content-lg-end">
-              <div
-                className="at-btn-group at_fade_anim"
-                data-delay=".4"
-                data-fade-from="bottom"
-                data-ease="bounce"
-              >
-                <Link
-                  className="at-btn-circle bg-neutral-700"
-                  to="https://calendar.app.google/YfbveQGAuJS9kPEv5"
-                  aria-label="Book a call"
-                >
-                  {ARROW_CIRCLE_SVG}
-                </Link>
-
-                <Link
-                  className="at-btn z-index-1 bg-neutral-700"
-                  to="https://calendar.app.google/YfbveQGAuJS9kPEv5"
-                >
-                  Book a Project Call
-                </Link>
-
-                <Link
-                  className="at-btn-circle bg-neutral-700"
-                  to="https://calendar.app.google/YfbveQGAuJS9kPEv5"
-                  aria-label="Book a call"
-                >
-                  {ARROW_CIRCLE_SVG}
-                </Link>
-              </div>
-            </div>
+            <p className="text-white fz-font-lg m-0">
+              Building practical experience through software projects,
+              business websites, and full-stack application development.
+            </p>
           </div>
 
-          <div className="row g-4">
-            <div className="col-xxl-4 col-lg-5">
-              <div className="alt-portfolio-item mb-30 at-hover-item">
-                <a
-                  href="#"
-                  id="cv-download-card"
-                  onClick={openModal}
-                  className="alt-portfolio-thumb mb-15 p-relative fix d-block"
-                >
-                  <img
-                    className="w-100 scale-img-from-to"
-                    data-value-1="1.5"
-                    data-value-2="1"
-                    src="/assets/imgs/pages/webp-images/resume.webp"
-                    alt="Hasaan Azeem résumé preview"
-                    width={550}
-                    height={540}
-                    loading="lazy"
-                  />
+          <div className="col-lg-3 ms-lg-auto d-flex justify-content-lg-end">
+            <div
+              className="at-btn-group at_fade_anim"
+              data-delay=".4"
+              data-fade-from="bottom"
+              data-ease="bounce"
+            >
+              <Link
+                className="at-btn-circle bg-neutral-700"
+                to="https://calendar.app.google/YfbveQGAuJS9kPEv5"
+                aria-label="Book a call"
+              >
+                {ARROW_CIRCLE_SVG}
+              </Link>
 
-                  <div className="alt-portfolio-btn">
-                    <div className="content">
-                      <h3 className="h2 fw-400 fz-font-3xl text-white mb-0 mt-20">
-                        Click to receive my Résumé.
-                      </h3>
+              <Link
+                className="at-btn z-index-1 bg-neutral-700"
+                to="https://calendar.app.google/YfbveQGAuJS9kPEv5"
+              >
+                Book a Project Call
+              </Link>
 
-                      <p className="text-white fz-font-md mb-0 mt-10 text-truncate-2 des">
-                        Explore my experience across web applications,
-                        ecommerce, automation, and business software.
-                      </p>
-                    </div>
-                  </div>
-                </a>
-
-                <div className="alt-portfolio-content d-flex justify-content-between align-items-center bg-neutral-700">
-                  <p className="alt-portfolio-title mb-0 fw-bold">
-                    <a
-                      href="#"
-                      id="cv-download-link"
-                      onClick={openModal}
-                      className="common-underline text-white"
-                    >
-                      Get My Résumé
-                    </a>
-                  </p>
-
-                  <span className="alt-portfolio-plus text-white">
-                    {PLUS_ICON}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-lg-7 ms-auto pt-80">
-              <ul className="journey-list" role="list">
-                {JOURNEY_ITEMS.map((item, i) => (
-                  <li
-                    key={i}
-                    className="journey-list__item scroll-move-up"
-                  >
-                    <span className="journey-list__date">{item.date}</span>
-
-                    <div className="journey-list__body">
-                      <h3 className="journey-list__title neutral-0 h6">
-                        {item.title}{" "}
-                        <span className="journey-list__company">
-                          {item.company}
-                        </span>
-                      </h3>
-
-                      <p className="journey-list__desc">{item.desc}</p>
-                    </div>
-
-                    <Link
-                      to="#"
-                      className="journey-list__link"
-                      aria-label="View details"
-                    >
-                      {ARROW_SVG}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <Link
+                className="at-btn-circle bg-neutral-700"
+                to="https://calendar.app.google/YfbveQGAuJS9kPEv5"
+                aria-label="Book a call"
+              >
+                {ARROW_CIRCLE_SVG}
+              </Link>
             </div>
           </div>
         </div>
+
+        <div className="row g-4">
+          <div className="col-xxl-4 col-lg-5">
+            <div className="alt-portfolio-item mb-30 at-hover-item">
+              <a
+                href={RESUME_URL}
+                download="Hasaan-Azeem-Resume.pdf"
+                id="cv-download-card"
+                className="alt-portfolio-thumb mb-15 p-relative fix d-block"
+                aria-label="Download Hasaan Azeem résumé"
+              >
+                <img
+                  className="w-100 scale-img-from-to"
+                  data-value-1="1.5"
+                  data-value-2="1"
+                  src="/assets/imgs/pages/webp-images/resume.webp"
+                  alt="Hasaan Azeem résumé preview"
+                  width={550}
+                  height={540}
+                  loading="lazy"
+                />
+
+                <div className="alt-portfolio-btn">
+                  <div className="content">
+                    <h3 className="h2 fw-400 fz-font-3xl text-white mb-0 mt-20">
+                      Download My Résumé.
+                    </h3>
+
+                    <p className="text-white fz-font-md mb-0 mt-10 text-truncate-2 des">
+                      Explore my experience across web applications,
+                      ecommerce, automation, and business software.
+                    </p>
+                  </div>
+                </div>
+              </a>
+
+              <div className="alt-portfolio-content d-flex justify-content-between align-items-center bg-neutral-700">
+                <p className="alt-portfolio-title mb-0 fw-bold">
+                  <a
+                    href={RESUME_URL}
+                    download="Hasaan-Azeem-Resume.pdf"
+                    id="cv-download-link"
+                    className="common-underline text-white"
+                  >
+                    Download My Résumé
+                  </a>
+                </p>
+
+                <span className="alt-portfolio-plus text-white">
+                  {PLUS_ICON}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-lg-7 ms-auto pt-80">
+            <ul className="journey-list" role="list">
+              {JOURNEY_ITEMS.map((item, i) => (
+                <li
+                  key={i}
+                  className="journey-list__item scroll-move-up"
+                >
+                  <span className="journey-list__date">
+                    {item.date}
+                  </span>
+
+                  <div className="journey-list__body">
+                    <h3 className="journey-list__title neutral-0 h6">
+                      {item.title}{" "}
+                      <span className="journey-list__company">
+                        {item.company}
+                      </span>
+                    </h3>
+
+                    <p className="journey-list__desc">
+                      {item.desc}
+                    </p>
+                  </div>
+
+                  <Link
+                    to="#"
+                    className="journey-list__link"
+                    aria-label="View details"
+                  >
+                    {ARROW_SVG}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
