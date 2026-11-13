@@ -1,0 +1,185 @@
+
+export const SITE_URL = (
+  (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/+$/, "") ||
+  "https://hasaan.netlify.app"
+);
+
+export const SITE_NAME = "Hasaan Azeem";
+export const PERSON_NAME = "Hasaan Azeem";
+
+export const DEFAULT_TITLE =
+  "Hasaan Azeem | Full Stack Developer & AI Integrator";
+
+export const DEFAULT_DESCRIPTION =
+  "Hasaan Azeem is a Full Stack Developer building web applications, business-focused digital products, ecommerce platforms, and AI-powered integrations and workflow automation solutions.";
+
+export const OG_IMAGE = `${SITE_URL}/og-image.jpg`;
+
+export const SOCIALS = {
+  instagram: "https://www.instagram.com/autophile03/",
+  youtube: "https://www.youtube.com/@hasaan_azeem",
+  x: "https://x.com/hasaan_azeem",
+  linkedin: "https://www.linkedin.com/in/hasaan-azeem/",
+  github: "https://github.com/hasaan-azeem",
+};
+
+// Template leftovers that render the home page: canonicalise to "/"
+const HOME_ALIASES = new Set([
+  "/index-dark",
+  "/index-5",
+  "/index-5-dark",
+]);
+
+export function canonicalPath(pathname: string) {
+  if (HOME_ALIASES.has(pathname)) return "/";
+
+  return pathname.length > 1
+    ? pathname.replace(/\/+$/, "")
+    : pathname;
+}
+
+export function pageDates(path: string) {
+  try {
+    return __PAGE_DATES__[path];
+  } catch {
+    return undefined;
+  }
+}
+
+export function formatDate(iso: string) {
+  return new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+export function absUrl(path: string) {
+  return SITE_URL + (path === "/" ? "/" : path);
+}
+
+type PageMetaInput = {
+  title: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+};
+
+/**
+ * Shared by the client (PageMeta effect) and the build-time prerenderer.
+ */
+export function buildMeta(
+  input: PageMetaInput,
+  pathname: string,
+  extra: object[] = []
+) {
+  const path = canonicalPath(pathname);
+  const url = absUrl(path);
+  const isHome = path === "/";
+
+  const fullTitle = input.title.includes(SITE_NAME)
+    ? input.title
+    : `${input.title} | ${SITE_NAME}`;
+
+  const description = input.description || DEFAULT_DESCRIPTION;
+  const image = input.image || OG_IMAGE;
+  const noindex = !!input.noindex;
+
+  const crumbs = isHome
+    ? []
+    : [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: absUrl("/"),
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: input.title.replace(` | ${SITE_NAME}`, ""),
+          item: url,
+        },
+      ];
+
+  const jsonLd: object[] = noindex
+    ? []
+    : [
+        {
+          "@context": "https://schema.org",
+          "@type":
+            path === "/contact"
+              ? ["WebPage", "ContactPage"]
+              : "WebPage",
+          "@id": `${url}#webpage`,
+          url,
+          name: fullTitle,
+          description,
+          inLanguage: "en",
+          isPartOf: {
+            "@id": `${SITE_URL}/#website`,
+          },
+          about: {
+            "@id": `${SITE_URL}/#person`,
+          },
+          primaryImageOfPage: {
+            "@type": "ImageObject",
+            url: image,
+          },
+          ...(pageDates(path) && !isHome
+            ? {
+                datePublished: pageDates(path)!.published,
+                dateModified: pageDates(path)!.modified,
+                author: {
+                  "@id": `${SITE_URL}/#person`,
+                },
+              }
+            : {}),
+        },
+        ...(crumbs.length
+          ? [
+              {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                itemListElement: crumbs,
+              },
+            ]
+          : []),
+        ...extra,
+      ];
+
+  return {
+    path,
+    url,
+    isHome,
+    fullTitle,
+    description,
+    image,
+    noindex,
+    jsonLd,
+  };
+}
+
+export function itemListSchema(
+  name: string,
+  items: {
+    name: string;
+    url?: string;
+    description?: string;
+  }[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name,
+    numberOfItems: items.length,
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.name,
+      ...(it.url ? { url: it.url } : {}),
+      ...(it.description ? { description: it.description } : {}),
+    })),
+  };
+}

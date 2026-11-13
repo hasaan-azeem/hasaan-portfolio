@@ -1,0 +1,34 @@
+
+.sec-2-home-5__tech-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 13px;
+    border-radius: 50px;
+    background: #f3f3f3;
+    color: #252525;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.sec-2-home-5__card--small .at-btn {
+    flex-shrink: 0;
+}
+
+.sec-2-home-5__card--small .at-btn img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 575px) {
+    .sec-2-home-5__card--small .d-flex.flex-wrap {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .sec-2-home-5__card--small .d-flex.flex-wrap p {
+        max-width: 300px;
+        font-size: 14px;
+    }
+}
