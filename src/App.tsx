@@ -3,6 +3,7 @@ import MainLayout from "@/layouts/MainLayout";
 import Home5Page from "@/pages/Home5Page";
 import ContactPage from "@/pages/ContactPage";
 import NotFoundPage from "@/pages/NotFoundPage";
+import ProjectDetailPage from "@/pages/ProjectDetailPage";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
 
       <Route element={<MainLayout headerStyle={2} footerStyle={2} />}>
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/projects/:slug" element={<ProjectDetailPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
 

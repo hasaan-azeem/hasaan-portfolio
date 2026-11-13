@@ -1,7 +1,7 @@
 import PageMeta from "@/seo/PageMeta";
 import ContactSection from "@/shared/sections/contact/ContactSection";
 import ContactDetails, { CONTACT_FAQS } from "@/shared/sections/contact/ContactDetails";
-import RelatedLinks from "@/shared/elements/RelatedLinks";
+// import RelatedLinks from "@/shared/elements/RelatedLinks";
 import Breadcrumbs from "@/shared/elements/Breadcrumbs";
 import "@/shared/elements/Breadcrumbs.css";
 

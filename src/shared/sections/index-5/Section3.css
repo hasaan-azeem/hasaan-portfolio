@@ -1,0 +1,423 @@
+
+/* =========================================
+   MOBILE PROJECT GALLERY
+========================================= */
+
+.s3-mobile-projects {
+  display: none;
+}
+
+.s3-mobile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.s3-mobile-card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.s3-mobile-card-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #e9e9e9;
+}
+
+.s3-mobile-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.s3-mobile-card-open {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fff;
+  color: #111;
+  font-size: 17px;
+  transition: transform 0.3s ease;
+}
+
+.s3-mobile-card-info {
+  padding-top: 12px;
+}
+
+.s3-mobile-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.s3-mobile-card-meta span:first-child {
+  opacity: 0.55;
+}
+
+.s3-mobile-card-meta span:last-child {
+  opacity: 0.75;
+}
+
+.s3-mobile-card-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.s3-mobile-card-title h3 {
+  margin: 0;
+  font-size: clamp(15px, 4vw, 19px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.s3-mobile-card-arrow {
+  font-size: 17px;
+  transition: transform 0.3s ease;
+}
+
+.s3-mobile-hint {
+  margin: 28px 0 0;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  opacity: 0.6;
+}
+
+/* =========================================
+   PROJECT DETAIL OVERLAY
+========================================= */
+
+.s3-project-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: s3OverlayIn 0.25s ease both;
+}
+
+.s3-project-modal {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 760px;
+  max-height: min(90dvh, 900px);
+  overflow: hidden;
+  border-radius: 18px;
+  background: #f8f8f6;
+  color: #111;
+  animation: s3ModalIn 0.3s ease both;
+}
+
+.s3-modal-header,
+.s3-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 22px;
+  flex-shrink: 0;
+}
+
+.s3-modal-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.s3-modal-header > span,
+.s3-modal-footer > span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.3px;
+}
+
+.s3-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 50%;
+  background: transparent;
+  color: #111;
+  font-size: 25px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.s3-modal-content {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.s3-modal-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #e9e9e9;
+}
+
+.s3-modal-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.s3-modal-project-info {
+  padding: 26px 30px 32px;
+}
+
+.s3-modal-category,
+.s3-modal-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+
+.s3-modal-project-info h2 {
+  margin: 10px 0 14px;
+  font-size: clamp(30px, 6vw, 44px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+}
+
+.s3-modal-description {
+  max-width: 620px;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #444;
+}
+
+.s3-modal-divider {
+  height: 1px;
+  margin: 24px 0;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.s3-modal-section {
+  margin-bottom: 22px;
+}
+
+.s3-modal-section:last-child {
+  margin-bottom: 0;
+}
+
+.s3-modal-section > p {
+  margin: 9px 0 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #444;
+}
+
+.s3-modal-features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.s3-modal-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.s3-modal-features li span {
+  flex-shrink: 0;
+}
+
+.s3-modal-technologies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.s3-modal-technologies span {
+  padding: 7px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.17);
+  border-radius: 30px;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.s3-modal-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.s3-modal-footer button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #111;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+}
+
+/* =========================================
+   RESPONSIVE BEHAVIOUR
+========================================= */
+
+@media (max-width: 991px) {
+  .s3-desktop-projects {
+    display: none;
+  }
+
+  .s3-mobile-projects {
+    display: block;
+    padding: 0 12px;
+  }
+}
+
+@media (max-width: 575px) {
+  .s3-mobile-grid {
+    gap: 18px 12px;
+  }
+
+  .s3-mobile-card-image {
+    border-radius: 10px;
+  }
+
+  .s3-mobile-card-info {
+    padding-top: 10px;
+  }
+
+  .s3-mobile-card-meta {
+    font-size: 8px;
+    letter-spacing: 0.5px;
+    gap: 6px;
+  }
+
+  .s3-project-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+
+  .s3-project-modal {
+    width: 100%;
+    height: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .s3-modal-header,
+  .s3-modal-footer {
+    padding: 14px 18px;
+  }
+
+  .s3-modal-image {
+    aspect-ratio: 4 / 3;
+  }
+
+  .s3-modal-project-info {
+    padding: 24px 20px 30px;
+  }
+
+  .s3-modal-features {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .s3-mobile-card:hover .s3-mobile-card-image img {
+    transform: scale(1.045);
+  }
+
+  .s3-mobile-card:hover .s3-mobile-card-open {
+    transform: rotate(45deg);
+  }
+
+  .s3-mobile-card:hover .s3-mobile-card-arrow {
+    transform: translate(3px, -3px);
+  }
+
+  .s3-modal-close:hover {
+    background: #111;
+    color: #fff;
+  }
+}
+
+@keyframes s3OverlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes s3ModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s3-project-overlay,
+  .s3-project-modal {
+    animation: none;
+  }
+
+  .s3-mobile-card-image img,
+  .s3-mobile-card-open,
+  .s3-mobile-card-arrow {
+    transition: none;
+  }
+}
