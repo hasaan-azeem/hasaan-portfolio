@@ -5,6 +5,7 @@ import ContactPage from "@/pages/ContactPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import ProjectDetailPage from "@/pages/ProjectDetailPage";
 import ScrollToTop from "@/shared/elements/ScrollToTop";
+import AboutPage from "@/pages/AboutPage";
 
 export default function App() {
   return (
@@ -16,6 +17,8 @@ export default function App() {
       </Route>
 
       <Route element={<MainLayout headerStyle={2} footerStyle={2} />}>
+        <Route path="/about" element={<AboutPage />} />
+
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/projects/:slug" element={<ProjectDetailPage />} />
         <Route path="*" element={<NotFoundPage />} />
