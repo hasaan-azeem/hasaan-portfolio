@@ -1,3 +1,4 @@
+
 import PageMeta from "@/seo/PageMeta";
 import AboutFaq, { FAQS } from "@/shared/sections/index-5/AboutFaq";
 import CinematicHero from "@/shared/sections/index-5/CinematicHero";
@@ -11,16 +12,24 @@ export default function Home5Page() {
   return (
     <>
       <PageMeta
-        title="Hasaan Azeem | AI Creator, Automations & Claude"
-        description="Hasaan Azeem is an AI creator teaching Claude, n8n automations and AI skills. Free resources, Claude skills and a 90 day roadmap to remote work."
+        title="Hasaan Azeem | Full Stack Software Engineer & Product Builder"
+        description="Hasaan Azeem is a Full Stack Software Engineer building modern web applications, business software, ecommerce solutions, and practical AI-powered workflows."
         jsonLd={[
           {
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            mainEntity: FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+            mainEntity: FAQS.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: f.a,
+              },
+            })),
           },
         ]}
       />
+
       <CinematicHero />
       <Section2 />
       <Section4 />
@@ -28,7 +37,6 @@ export default function Home5Page() {
       <Section5 />
       <Section6 />
       <AboutFaq />
-
     </>
   );
 }

@@ -5,7 +5,7 @@ import RevealText from "@/shared/effects/RevealText";
 import Breadcrumbs from "@/shared/elements/Breadcrumbs";
 import "@/shared/elements/Breadcrumbs.css";
 import { PROJECTS } from "@/shared/sections/projects/projectsData";
-import "../shared/sections/index-5//ProjectResponsive.css";
+import "../shared/sections/index-5//ProjectDetail.css";
 
 export default function ProjectDetailPage() {
   const { slug } = useParams();
@@ -60,7 +60,7 @@ export default function ProjectDetailPage() {
           </div>
 
           {/* PROJECT VISUAL */}
-          <div className="s3-detail-hero-image">
+          <div className="s3-detail-hero-image text-center">
             <img
               src={project.desktopImage}
               alt={project.imageAlt}

@@ -1,4 +1,3 @@
-// import { Link } from "react-router-dom";
 import "@/shared/sections/index-5/AboutFaq.css";
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -16,12 +15,8 @@ export const CONTACT_FAQS: { q: string; a: string }[] = [
     a: "You can reach out about full-stack web development, business websites, eCommerce platforms, custom web applications, AI integrations, workflow automation, freelance projects, and professional opportunities. I'm also open to discussing technical collaborations and interesting ideas.",
   },
   {
-    q: "Are you open to remote opportunities?",
-    a: "Yes. I'm open to remote software development opportunities and collaborations with businesses and teams across different time zones.",
-  },
-  {
     q: "How do I book a call?",
-    a: "Use the Book an appointment button on this page to pick a time in Hasaan Azeem's calendar. If no slot suits you, send an email and propose a time.",
+    a: "Use the Book an appointment calendar on this page to pick a time in Hasaan Azeem's calendar. If no slot suits you, send an email and propose a time.",
   },
   {
     q: "Where can I follow Hasaan Azeem instead?",

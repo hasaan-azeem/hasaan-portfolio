@@ -1,33 +1,43 @@
 import { Link } from "react-router-dom";
+import { Reveal } from "./motion";
+import SocialLinks from "@/shared/elements/SocialLinks";
+import { CONTACT_EMAIL } from "./socials";
 
 export default function AboutCTA() {
   return (
-    <section className="about-cta">
+    <section className="about-cta-wrap">
       <div className="about-container">
-        <div className="about-cta__top">
-          <span className="about-eyebrow">05 / WHAT'S NEXT?</span>
-          <span className="about-cta__availability">
+        <Reveal className="about-cta">
+          <div className="about-cta__glow" aria-hidden="true" />
+
+          <span className="about-eyebrow about-eyebrow--light">
+            <span className="about-eyebrow__dot" />
             OPEN TO OPPORTUNITIES
           </span>
-        </div>
 
-        <h2>
-          Have an idea?
-          <br />
-          Let's make it <span>happen.</span>
-        </h2>
+          <h2>
+            Have an idea?
+            <br />
+            Let's make it happen.
+          </h2>
 
-        <div className="about-cta__bottom">
           <p>
             Whether you have a project in mind, an interesting opportunity, or
             simply want to connect, I'd be glad to hear from you.
           </p>
 
-          <Link to="/contact" className="about-cta__button">
-            GET IN TOUCH
-            <span>↗</span>
-          </Link>
-        </div>
+          <div className="about-cta__row">
+            <Link to="/contact" className="about-btn about-btn--light">
+              Contact me
+            </Link>
+
+            <a className="about-cta__email" href={`mailto:${CONTACT_EMAIL}`}>
+              {CONTACT_EMAIL}
+            </a>
+          </div>
+
+          <SocialLinks light className="about-cta__socials" />
+        </Reveal>
       </div>
     </section>
   );

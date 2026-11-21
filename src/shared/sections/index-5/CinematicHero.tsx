@@ -1,3 +1,4 @@
+
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import SocialLinks from "@/shared/elements/SocialLinks";
 import "./CinematicHero.css";
@@ -216,7 +217,7 @@ export default function CinematicHero() {
         {/* Hero heading */}
         <div className="ch__head">
           <p className="ch__eyebrow">
-            Full Stack Developer · AI Integrator · Problem Solver
+            Full Stack Software Engineer · Product Builder
           </p>
 
           <h1 className="ch__title">
@@ -230,7 +231,7 @@ export default function CinematicHero() {
             <img
               className="ch__base mt-50"
               src={BASE_SRC}
-              alt="Hasaan, the Full Stack Developer and creator behind Hasaan Builds Digital"
+              alt="Hasaan Azeem, Full Stack Software Engineer"
               width={550}
               height={850}
               loading="eager"
@@ -243,9 +244,8 @@ export default function CinematicHero() {
         {/* Description and CTA */}
         <div className="ch__body">
           <p className="ch__lead">
-            I'm Hasaan, a Full Stack Developer building useful web applications,
-            business-focused digital products, and AI-powered workflows, while
-            sharing what I learn and build.
+            I build modern web applications, business software, and practical
+            AI-powered solutions that turn ideas into useful digital products.
           </p>
 
           <div className="ch__cta">

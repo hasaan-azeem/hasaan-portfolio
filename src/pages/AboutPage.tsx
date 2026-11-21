@@ -1,11 +1,13 @@
 import PageMeta from "@/seo/PageMeta";
 import {
   AboutHero,
-  AboutStory,
+  AboutIntro,
   AboutExpertise,
   AboutJourney,
-  AboutPrinciples,
+  AboutMarquee,
+  AboutFigures,
   AboutCTA,
+  // AboutFooterBrand,
 } from "@/shared/sections/about/index";
 import "@/shared/sections/about/about.css";
 
@@ -19,11 +21,13 @@ export default function AboutPage() {
 
       <main className="about-page">
         <AboutHero />
-        <AboutStory />
+        <AboutIntro />
         <AboutExpertise />
         <AboutJourney />
-        <AboutPrinciples />
+        <AboutMarquee />
+        <AboutFigures />
         <AboutCTA />
+        {/* <AboutFooterBrand /> */}
       </main>
     </>
   );

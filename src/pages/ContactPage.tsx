@@ -8,17 +8,31 @@ import "@/shared/elements/Breadcrumbs.css";
 export default function ContactPage() {
   return (
     <>
-      <PageMeta title="Contact & Book a Call" description="Contact Hasaan Azeem or book a call. AI creator based in Lahore, Pakistan, teaching Claude and automation. Replies within 1 to 2 business days."
-        jsonLd={[{ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: CONTACT_FAQS.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }]}
+      <PageMeta
+        title="Contact & Book a Call"
+        description="Contact Hasaan Azeem or book a call. AI creator based in Lahore, Pakistan, teaching Claude and automation. Replies within 1 to 2 business days."
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: CONTACT_FAQS.map((f) => ({
+              "@type": "Question",
+              name: f.q,
+              acceptedAnswer: { "@type": "Answer", text: f.a },
+            })),
+          },
+        ]}
       />
+
       <div className="pt-85" />
-      <div className="container pt-40 text-start">
+
+      <div className="container pt-40 d-flex justify-content-center">
         <Breadcrumbs current="Contact" />
       </div>
+
       <ContactSection />
       <ContactDetails />
       {/* <RelatedLinks /> */}
-
     </>
   );
 }
