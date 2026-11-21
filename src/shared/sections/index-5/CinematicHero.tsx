@@ -1,9 +1,7 @@
-
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SocialLinks from "@/shared/elements/SocialLinks";
 import "./CinematicHero.css";
 
-const HeroThreeScene = lazy(() => import("./HeroThreeScene"));
 const BASE_SRC = "/assets/imgs/pages/webp-images/hero.webp";
 
 const BOOKING_URL = "https://calendar.app.google/AUAQE4J2iuNRHGSy6";
@@ -29,29 +27,28 @@ const STATS = [
   { n: "10", label: "Technologies applied" },
 ];
 
-// const CURSOR_TRAIL_IMAGES = [
-//   "/assets/imgs/pages/cursor-trail/cursor%20trail%201.webp",
-//   "/assets/imgs/pages/cursor-trail/cursor%20trail%202.webp",
-//   "/assets/imgs/pages/cursor-trail/cursor%20trail%203.webp",
-//   "/assets/imgs/pages/cursor-trail/cursor%20trail%204.webp",
-//   "/assets/imgs/pages/cursor-trail/cursor%20trail%205.webp",
-//   "/assets/imgs/pages/cursor-trail/cursor%20trail%206.webp",
-//   "/assets/imgs/pages/cursor-trail/cursor%20trail%207.webp",
-//   "/assets/imgs/pages/cursor-trail/cursor%20trail%208.webp",
-// ];
+const CURSOR_TRAIL_IMAGES = [
+  "/assets/imgs/pages/cursor-trail/cursor%20trail%201.webp",
+  "/assets/imgs/pages/cursor-trail/cursor%20trail%202.webp",
+  "/assets/imgs/pages/cursor-trail/cursor%20trail%203.webp",
+  "/assets/imgs/pages/cursor-trail/cursor%20trail%204.webp",
+  "/assets/imgs/pages/cursor-trail/cursor%20trail%205.webp",
+  "/assets/imgs/pages/cursor-trail/cursor%20trail%206.webp",
+  "/assets/imgs/pages/cursor-trail/cursor%20trail%207.webp",
+  "/assets/imgs/pages/cursor-trail/cursor%20trail%208.webp",
+];
 
 /* =========================================================
    MAIN HERO
 ========================================================= */
 
 export default function CinematicHero() {
-  // const stageRef = useRef<HTMLDivElement>(null);
-  // const trailRef = useRef<HTMLDivElement>(null);
-  const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const trailRef = useRef<HTMLDivElement>(null);
 
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [showThree, setShowThree] = useState(false);
 
+  /* Respect the user's reduced-motion preference */
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -63,155 +60,131 @@ export default function CinematicHero() {
 
     media.addEventListener("change", updateMotionPreference);
 
-    if (!media.matches) {
-      const idleWindow = window.setTimeout(() => setShowThree(true), 1200);
-
-      return () => {
-        media.removeEventListener("change", updateMotionPreference);
-        window.clearTimeout(idleWindow);
-      };
-    }
-
     return () => {
       media.removeEventListener("change", updateMotionPreference);
     };
   }, []);
 
   /* =========================================================
-     ORIGINAL CURSOR IMAGE TRAIL
+     CURSOR IMAGE TRAIL
   ========================================================= */
 
-  // useEffect(() => {
-  //   const stage = stageRef.current;
-  //   const layer = trailRef.current;
+  useEffect(() => {
+    const stage = stageRef.current;
+    const layer = trailRef.current;
 
-  //   if (!stage || !layer || reducedMotion) return;
+    if (!stage || !layer || reducedMotion) return;
 
-  //   const MAX_TRAIL_LENGTH = 24;
-  //   const MOUSE_THRESHOLD = 65;
+    const MAX_TRAIL_LENGTH = 24;
+    const MOUSE_THRESHOLD = 65;
 
-  //   let lastX = 0;
-  //   let lastY = 0;
-  //   let hasLastPosition = false;
-  //   let disposed = false;
+    let lastX = 0;
+    let lastY = 0;
+    let hasLastPosition = false;
+    let disposed = false;
 
-  //   const trail: HTMLImageElement[] = [];
+    const trail: HTMLImageElement[] = [];
 
-  //   const createTrailImage = (x: number, y: number) => {
-  //     const img = document.createElement("img");
+    const createTrailImage = (x: number, y: number) => {
+      const img = document.createElement("img");
 
-  //     const randomIndex = Math.floor(
-  //       Math.random() * CURSOR_TRAIL_IMAGES.length,
-  //     );
+      const randomIndex = Math.floor(
+        Math.random() * CURSOR_TRAIL_IMAGES.length,
+      );
 
-  //     const rotation = (Math.random() - 0.5) * 35;
+      const rotation = (Math.random() - 0.5) * 35;
 
-  //     img.className = "ch__trail-img";
-  //     img.src = CURSOR_TRAIL_IMAGES[randomIndex];
-  //     img.alt = "";
-  //     img.draggable = false;
-  //     img.decoding = "async";
+      img.className = "ch__trail-img";
+      img.src = CURSOR_TRAIL_IMAGES[randomIndex];
+      img.alt = "";
+      img.draggable = false;
+      img.decoding = "async";
 
-  //     img.style.left = `${x}px`;
-  //     img.style.top = `${y}px`;
+      img.style.left = `${x}px`;
+      img.style.top = `${y}px`;
 
-  //     img.style.setProperty("--trail-rotation", `${rotation}deg`);
+      img.style.setProperty("--trail-rotation", `${rotation}deg`);
 
-  //     img.addEventListener(
-  //       "animationend",
-  //       () => {
-  //         img.remove();
+      img.addEventListener(
+        "animationend",
+        () => {
+          img.remove();
 
-  //         const index = trail.indexOf(img);
+          const index = trail.indexOf(img);
 
-  //         if (index !== -1) {
-  //           trail.splice(index, 1);
-  //         }
-  //       },
-  //       { once: true },
-  //     );
+          if (index !== -1) {
+            trail.splice(index, 1);
+          }
+        },
+        { once: true },
+      );
 
-  //     layer.appendChild(img);
-  //     trail.push(img);
+      layer.appendChild(img);
+      trail.push(img);
 
-  //     if (trail.length > MAX_TRAIL_LENGTH) {
-  //       const oldest = trail.shift();
-  //       oldest?.remove();
-  //     }
-  //   };
+      if (trail.length > MAX_TRAIL_LENGTH) {
+        const oldest = trail.shift();
+        oldest?.remove();
+      }
+    };
 
-  //   const onPointerMove = (event: PointerEvent) => {
-  //     if (disposed || event.pointerType !== "mouse") return;
+    const onPointerMove = (event: PointerEvent) => {
+      if (disposed || event.pointerType !== "mouse") return;
 
-  //     const rect = stage.getBoundingClientRect();
+      const rect = stage.getBoundingClientRect();
 
-  //     const x = event.clientX - rect.left;
-  //     const y = event.clientY - rect.top;
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
 
-  //     if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
-  //       hasLastPosition = false;
-  //       return;
-  //     }
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+        hasLastPosition = false;
+        return;
+      }
 
-  //     if (hasLastPosition) {
-  //       const distance = Math.hypot(x - lastX, y - lastY);
+      if (hasLastPosition) {
+        const distance = Math.hypot(x - lastX, y - lastY);
 
-  //       if (distance < MOUSE_THRESHOLD) return;
-  //     }
+        if (distance < MOUSE_THRESHOLD) return;
+      }
 
-  //     lastX = x;
-  //     lastY = y;
-  //     hasLastPosition = true;
+      lastX = x;
+      lastY = y;
+      hasLastPosition = true;
 
-  //     createTrailImage(x, y);
-  //   };
+      createTrailImage(x, y);
+    };
 
-  //   const onPointerLeave = () => {
-  //     hasLastPosition = false;
-  //   };
+    const onPointerLeave = () => {
+      hasLastPosition = false;
+    };
 
-  //   stage.addEventListener("pointermove", onPointerMove, {
-  //     passive: true,
-  //   });
+    stage.addEventListener("pointermove", onPointerMove, {
+      passive: true,
+    });
 
-  //   stage.addEventListener("pointerleave", onPointerLeave);
+    stage.addEventListener("pointerleave", onPointerLeave);
 
-  //   return () => {
-  //     disposed = true;
+    return () => {
+      disposed = true;
 
-  //     stage.removeEventListener("pointermove", onPointerMove);
-  //     stage.removeEventListener("pointerleave", onPointerLeave);
+      stage.removeEventListener("pointermove", onPointerMove);
+      stage.removeEventListener("pointerleave", onPointerLeave);
 
-  //     trail.forEach((img) => img.remove());
-  //     trail.length = 0;
+      trail.forEach((img) => img.remove());
+      trail.length = 0;
 
-  //     layer.replaceChildren();
-  //   };
-  // }, [reducedMotion]);
+      layer.replaceChildren();
+    };
+  }, [reducedMotion]);
 
   return (
-    <section ref={sectionRef} className="ch" aria-label="Introduction">
+    <section className="ch" aria-label="Introduction">
       {/* Background atmosphere */}
       <div className="ch__ambient" aria-hidden="true">
         <span className="ch__glow ch__glow--1" />
         <span className="ch__glow ch__glow--2" />
         <span className="ch__grid" />
       </div>
-
-      {/* Three.js background */}
-      {showThree && !reducedMotion ? (
-        <Suspense fallback={null}>
-          <HeroThreeScene
-            reducedMotion={reducedMotion}
-            sectionRef={sectionRef}
-          />
-        </Suspense>
-      ) : null}
-
-      {/* Decorative background details
-      <span className="ch__ring ch__ring--1" aria-hidden="true" />
-      <span className="ch__ring ch__ring--2" aria-hidden="true" />
-      <span className="ch__ring ch__ring--3" aria-hidden="true" /> */}
 
       <div className="ch__inner">
         {/* Hero heading */}
@@ -226,7 +199,14 @@ export default function CinematicHero() {
         </div>
 
         {/* Portrait stage */}
-        <div className="ch__stage">
+        <div className="ch__stage" ref={stageRef}>
+          {/* Cursor image trail (sits behind the portrait) */}
+          <div
+            className="ch__cursor-trail"
+            ref={trailRef}
+            aria-hidden="true"
+          />
+
           <div className="ch__figure">
             <img
               className="ch__base mt-50"

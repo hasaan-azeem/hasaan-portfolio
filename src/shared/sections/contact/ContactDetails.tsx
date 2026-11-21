@@ -1,3 +1,5 @@
+import { useRef, type MouseEvent } from "react";
+import gsap from "gsap";
 import "@/shared/sections/index-5/AboutFaq.css";
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -24,6 +26,73 @@ export const CONTACT_FAQS: { q: string; a: string }[] = [
   },
 ];
 
+/* One FAQ row. Keeps native <details> (good for SEO and accessibility)
+   and animates the answer height with GSAP. */
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const detailsRef = useRef<HTMLDetailsElement | null>(null);
+  const answerRef = useRef<HTMLDivElement | null>(null);
+  const tweenRef = useRef<gsap.core.Tween | null>(null);
+
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
+    /* Stop the browser from toggling instantly, we do it ourselves */
+    event.preventDefault();
+
+    const details = detailsRef.current;
+    const answer = answerRef.current;
+    if (!details || !answer) return;
+
+    tweenRef.current?.kill();
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    const isOpening = !details.open;
+
+    if (reduceMotion) {
+      details.open = isOpening;
+      return;
+    }
+
+    if (isOpening) {
+      details.open = true;
+      tweenRef.current = gsap.fromTo(
+        answer,
+        { height: 0, opacity: 0 },
+        {
+          height: "auto",
+          opacity: 1,
+          duration: 0.5,
+          ease: "power3.out",
+          onComplete: () => {
+            gsap.set(answer, { clearProps: "height,opacity" });
+          },
+        }
+      );
+    } else {
+      tweenRef.current = gsap.to(answer, {
+        height: 0,
+        opacity: 0,
+        duration: 0.4,
+        ease: "power3.inOut",
+        onComplete: () => {
+          details.open = false;
+          gsap.set(answer, { clearProps: "height,opacity" });
+        },
+      });
+    }
+  };
+
+  return (
+    <details className="about-faq__item" ref={detailsRef}>
+      <summary onClick={handleClick}>{q}</summary>
+      <div ref={answerRef} style={{ overflow: "hidden" }}>
+        <p>{a}</p>
+      </div>
+    </details>
+  );
+}
+
 export default function ContactDetails() {
   return (
     <section
@@ -46,10 +115,7 @@ export default function ContactDetails() {
         </p>
         <div className="about-faq__list">
           {CONTACT_FAQS.map((f) => (
-            <details className="about-faq__item" key={f.q}>
-              <summary>{f.q}</summary>
-              <p>{f.a}</p>
-            </details>
+            <FaqItem key={f.q} q={f.q} a={f.a} />
           ))}
         </div>
       </div>

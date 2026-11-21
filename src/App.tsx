@@ -16,7 +16,7 @@ export default function App() {
         <Route path="/" element={<Home5Page />} />
       </Route>
 
-      <Route element={<MainLayout headerStyle={2} footerStyle={2} />}>
+      <Route element={<MainLayout headerStyle={5} footerStyle={2} />}>
         <Route path="/about" element={<AboutPage />} />
 
         <Route path="/contact" element={<ContactPage />} />
