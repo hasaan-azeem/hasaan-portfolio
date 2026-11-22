@@ -1,6 +1,6 @@
-import { useRef, type MouseEvent } from "react";
+import { useRef, useState, type MouseEvent } from "react";
 import gsap from "gsap";
-import "@/shared/sections/index-5/AboutFaq.css";
+import "./contact.css";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const CONTACT_FAQS: { q: string; a: string }[] = [
@@ -32,6 +32,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   const detailsRef = useRef<HTMLDetailsElement | null>(null);
   const answerRef = useRef<HTMLDivElement | null>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     /* Stop the browser from toggling instantly, we do it ourselves */
@@ -43,18 +44,21 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 
     tweenRef.current?.kill();
 
+    const opening = !details.open;
+
+    /* Flip the icon straight away so it stays in sync with the animation */
+    setIsOpen(opening);
+
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    const isOpening = !details.open;
-
     if (reduceMotion) {
-      details.open = isOpening;
+      details.open = opening;
       return;
     }
 
-    if (isOpening) {
+    if (opening) {
       details.open = true;
       tweenRef.current = gsap.fromTo(
         answer,
@@ -84,9 +88,16 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   };
 
   return (
-    <details className="about-faq__item" ref={detailsRef}>
-      <summary onClick={handleClick}>{q}</summary>
-      <div ref={answerRef} style={{ overflow: "hidden" }}>
+    <details
+      className={`ct-faq-item${isOpen ? " is-open" : ""}`}
+      ref={detailsRef}
+    >
+      <summary className="ct-faq-item__q" onClick={handleClick}>
+        <span>{q}</span>
+        <span className="ct-faq-item__icon" aria-hidden="true" />
+      </summary>
+
+      <div className="ct-faq-item__a" ref={answerRef}>
         <p>{a}</p>
       </div>
     </details>
@@ -95,28 +106,25 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 
 export default function ContactDetails() {
   return (
-    <section
-      className="about-faq"
-      aria-labelledby="contact-faq-title"
-      style={{ paddingTop: 0 }}
-    >
+    <section className="ct-faq" aria-labelledby="contact-faq-title">
       <div className="container">
-        <h2
-          className="about-faq__title"
-          id="contact-faq-title"
-          style={{ fontSize: "clamp(28px,4.5vw,52px)" }}
-        >
-          Before you reach out
-        </h2>
-        <p className="about-faq__intro">
-          Exploring my work, looking for a developer, or planning your next
-          project? Feel free to get in touch, explore my resources, or book a
-          call to discuss how we can work together.
-        </p>
-        <div className="about-faq__list">
-          {CONTACT_FAQS.map((f) => (
-            <FaqItem key={f.q} q={f.q} a={f.a} />
-          ))}
+        <div className="ct-faq__grid">
+          <div className="ct-faq__head">
+            <h2 className="ct-faq__title" id="contact-faq-title">
+              Before you reach out
+            </h2>
+            <p className="ct-faq__intro">
+              Exploring my work, looking for a developer, or planning your next
+              project? Feel free to get in touch, explore my resources, or book
+              a call to discuss how we can work together.
+            </p>
+          </div>
+
+          <div className="ct-faq__list">
+            {CONTACT_FAQS.map((f) => (
+              <FaqItem key={f.q} q={f.q} a={f.a} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
