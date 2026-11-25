@@ -51,6 +51,7 @@ function pageDates() {
 
 const SITEMAP_PATHS = [
   { path: "/", priority: "1.0" },
+  { path: "/about", priority: "0.8" },
   { path: "/contact", priority: "0.6" },
 ];
 
