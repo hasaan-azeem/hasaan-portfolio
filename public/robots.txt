@@ -1,0 +1,5 @@
+
+User-agent: *
+Allow: /
+
+Sitemap: https://hasaanazeem.vercel.app/sitemap.xml
