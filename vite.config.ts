@@ -8,6 +8,7 @@ import { execSync } from "child_process";
 // Keep these routes synchronized with src/App.tsx and scripts/prerender.mjs.
 const PAGE_SOURCES: Record<string, string> = {
   "/": "src/pages/Home5Page.tsx",
+  "/about": "src/pages/AboutPage.tsx",
   "/contact": "src/pages/ContactPage.tsx",
 };
 
