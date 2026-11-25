@@ -180,7 +180,7 @@ export default defineConfig(({ mode }) => {
   const dates = pageDates();
 
   const siteUrl = (
-    env.VITE_SITE_URL || "https://hasaan.netlify.app"
+    env.VITE_SITE_URL || "https://hasaanazeem.vercel.app"
   ).replace(/\/+$/, "");
 
   return {

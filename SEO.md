@@ -1,6 +1,6 @@
 # SEO Launch Checklist
 
-**Website:** https://hasaan.netlify.app  
+**Website:** https://hasaanazeem.vercel.app  
 **Brand:** Hasaan Azeem  
 **Positioning:** Full Stack Developer | AI Integrator | Problem Solver  
 **Primary goal:** Build search visibility, establish a consistent professional identity, and attract relevant development opportunities.

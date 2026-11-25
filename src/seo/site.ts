@@ -1,7 +1,7 @@
 
 export const SITE_URL = (
   (import.meta.env.VITE_SITE_URL as string | undefined)?.replace(/\/+$/, "") ||
-  "https://hasaan.netlify.app"
+  "https://hasaanazeem.vercel.app"
 );
 
 export const SITE_NAME = "Hasaan Azeem";
